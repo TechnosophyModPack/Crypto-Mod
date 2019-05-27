@@ -21,8 +21,10 @@ build
 
 # other
 run
-!LICENSE
-!README.*
+*LICENSE*
+README.txt
+CREDITS.txt
+forge-1.12.2-14.23.5.2836-changelog.txt
 !.gitignore
 
 # Installed mods (For OptiFine and CTM compatibility)
