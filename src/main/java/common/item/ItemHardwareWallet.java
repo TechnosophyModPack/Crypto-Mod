@@ -17,6 +17,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,11 +46,14 @@ public class ItemHardwareWallet extends Item  {
 						playerIn.dropItem(copiedStack, false);
 					}
 				}
-				else { stack.setTagCompound(nbt); }
+				else { 
+					
+					stack.setTagCompound(nbt); 
 				
+				}				
 				//nbt.setInteger("bitcoins", nbt.getInteger("bitcoins") + 1); 
 			}
-
+			playerIn.sendMessage(new TextComponentString("Bitcoins: " + stack.getTagCompound().getInteger("bitcoins")));
 			CryptoMod.logger.info(nbt.getInteger("bitcoins"));
 		}
 		
