@@ -1,5 +1,6 @@
 package common.storage;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public class WorldSaveDataHandler extends WorldSavedData
 
 	private static final String StorageKey = "bitcoinStorageManager";
 	
-	private Map<UUID, WalletData> addresses = new HashMap<Integer, Bitcoins>();
+	private Map<UUID, BigDecimal> walletInfo = new HashMap<>();
 	private int lastID;
 	
 	public WorldSaveDataHandler() 
@@ -41,11 +42,6 @@ public class WorldSaveDataHandler extends WorldSavedData
 		return instance;
 	}
 	
-/*	public BitcoinInventory getBitcoins(int id)
-	{
-		
-	}
-*/
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
@@ -57,10 +53,6 @@ public class WorldSaveDataHandler extends WorldSavedData
 			NBTTagCompound nbtTagCompound1 = nbtTagList.getCompoundTagAt(i);
 			int j = nbtTagCompound1.getByte("bitcoins");
 			
-			/* BitcoinInventory inventory = new BitcoinInventory(this);
-			 * inventory.readFromNBT(nbtTagCompound1);
-			 * bitcoins.put(j, inventory);
-			 */
 		}
 		lastID = nbtTagCompound.getInteger("lastID");
 	}
@@ -70,14 +62,16 @@ public class WorldSaveDataHandler extends WorldSavedData
     {
         NBTTagList nbtTagList = new NBTTagList();
 
-        for (Map.Entry<UUID, WalletData> entry : bitcoins.entrySet())
+        for (Map.Entry<UUID, BigDecimal> entry : walletInfo.entrySet())
         {
-            BitcoinInventory inventory = entry.getValue();
+/*            
+ 			BitcoinInventory inventory = entry.getValue();
 
             NBTTagCompound nbtTagCompound1 = new NBTTagCompound();
             nbtTagCompound1.setInteger("bitcoins", entry.getKey());
             inventory.writeToNBT(nbtTagCompound1);
             nbtTagList.appendTag(nbtTagCompound1);
+*/
         }
 
         nbtTagCompound.setTag("bitcoins", nbtTagList);
