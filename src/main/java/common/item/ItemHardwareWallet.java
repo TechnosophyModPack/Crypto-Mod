@@ -1,10 +1,12 @@
 package common.item;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import common.CryptoMod;
+import common.storage.WorldSaveDataHandler;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -32,9 +34,10 @@ public class ItemHardwareWallet extends Item  {
 			ItemStack stack = playerIn.getHeldItem(handIn);
 			NBTTagCompound nbt = stack.getTagCompound();
 			if(nbt == null) { nbt = new NBTTagCompound(); }
-			if(!nbt.hasKey("bitcoins")) 
-			{ 
-				nbt.setInteger("bitcoins", 0);
+			
+			if(!nbt.hasKey("account"))
+			{
+				nbt.setUniqueId("account", UUID.randomUUID());
 				if (stack.getCount() > 1 ) 
 				{
 					stack.shrink(1);
@@ -47,14 +50,15 @@ public class ItemHardwareWallet extends Item  {
 					}
 				}
 				else { 
-					
 					stack.setTagCompound(nbt); 
-				
-				}				
-				//nbt.setInteger("bitcoins", nbt.getInteger("bitcoins") + 1); 
+				}
 			}
-			playerIn.sendMessage(new TextComponentString("Bitcoins: " + stack.getTagCompound().getInteger("bitcoins")));
-			CryptoMod.logger.info(nbt.getInteger("bitcoins"));
+			
+			WorldSaveDataHandler walletData = WorldSaveDataHandler.get(worldIn);
+			double balance = walletData.getBalance(nbt.getUniqueId("account"));
+			
+			playerIn.sendMessage(new TextComponentString("Bitcoins: " + balance));
+			CryptoMod.logger.info("Bitcoins: " + balance);
 		}
 		
 		return new ActionResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
@@ -67,7 +71,7 @@ public class ItemHardwareWallet extends Item  {
     {
 		final NBTTagCompound compound = stack.getTagCompound();
 		
-		if (stack.getTagCompound() != null && compound.hasKey("bitcoins")) { tooltip.add("Bitcoins: " + stack.getTagCompound().getInteger("bitcoins")); }
+		if (stack.getTagCompound() != null && compound.hasKey("account")) { tooltip.add("Address: " + stack.getTagCompound().getUniqueId("account")); }
     }
 	
 	@Override

@@ -43,6 +43,20 @@ public class WorldSaveDataHandler extends WorldSavedData
 	}
 	
 
+	public Double getBalance(UUID account)
+	{
+		if (account == null)
+		{
+			return null;
+		}
+		if (!walletInfo.containsKey(account))
+		{
+			walletInfo.put(account, 0.0);
+			this.markDirty();
+		}
+		return walletInfo.get(account);
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		
