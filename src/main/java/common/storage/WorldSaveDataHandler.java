@@ -17,7 +17,7 @@ public class WorldSaveDataHandler extends WorldSavedData
 
 	private static final String StorageKey = "bitcoinStorageManager";
 	
-	private Map<UUID, BigDecimal> walletInfo = new HashMap<>();
+	private Map<UUID, Double> walletInfo = new HashMap<>();
 	private int lastID;
 	
 	public WorldSaveDataHandler() 
@@ -46,15 +46,16 @@ public class WorldSaveDataHandler extends WorldSavedData
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		
-		NBTTagList nbtTagList = nbtTagCompound.getTagList("bitcoins", Constants.NBT.TAG_COMPOUND);
+		NBTTagList nbtTagList = nbtTagCompound.getTagList("wallets", Constants.NBT.TAG_COMPOUND);
 		
 		for (int i = 0; i < nbtTagList.tagCount(); ++i)
 		{
-			NBTTagCompound nbtTagCompound1 = nbtTagList.getCompoundTagAt(i);
-			int j = nbtTagCompound1.getByte("bitcoins");
+			NBTTagCompound walletNBT = nbtTagList.getCompoundTagAt(i);
+			
+			UUID account = walletNBT.getUniqueId("account");
+			double balance = walletNBT.getDouble("balance");
 			
 		}
-		lastID = nbtTagCompound.getInteger("lastID");
 	}
 
     @Override
@@ -62,20 +63,15 @@ public class WorldSaveDataHandler extends WorldSavedData
     {
         NBTTagList nbtTagList = new NBTTagList();
 
-        for (Map.Entry<UUID, BigDecimal> entry : walletInfo.entrySet())
+        for (Map.Entry<UUID, Double> entry : walletInfo.entrySet())
         {
-/*            
- 			BitcoinInventory inventory = entry.getValue();
-
-            NBTTagCompound nbtTagCompound1 = new NBTTagCompound();
-            nbtTagCompound1.setInteger("bitcoins", entry.getKey());
-            inventory.writeToNBT(nbtTagCompound1);
-            nbtTagList.appendTag(nbtTagCompound1);
-*/
+            NBTTagCompound walletNBT = new NBTTagCompound();
+            walletNBT.setUniqueId("account", entry.getKey());
+            walletNBT.setDouble("balance", entry.getValue());
+            nbtTagList.appendTag(walletNBT);
         }
 
-        nbtTagCompound.setTag("bitcoins", nbtTagList);
-        nbtTagCompound.setInteger("LastID", lastID);
+        nbtTagCompound.setTag("wallets", nbtTagList);
 
         return nbtTagCompound;
     }
