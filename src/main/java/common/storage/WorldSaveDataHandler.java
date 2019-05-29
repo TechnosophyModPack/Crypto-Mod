@@ -17,8 +17,9 @@ public class WorldSaveDataHandler extends WorldSavedData
 
 	private static final String StorageKey = "bitcoinStorageManager";
 	
-	private Map<UUID, Double> walletInfo = new HashMap<>();
+	private Map<Long, Double> walletInfo = new HashMap<>();
 	private int lastID;
+	private long nextFreeID = 0;
 	
 	public WorldSaveDataHandler() 
 	{
@@ -43,7 +44,7 @@ public class WorldSaveDataHandler extends WorldSavedData
 	}
 	
 
-	public Double getBalance(UUID account)
+	public Double getBalance(Long account)
 	{
 		if (account == null)
 		{
@@ -66,10 +67,11 @@ public class WorldSaveDataHandler extends WorldSavedData
 		{
 			NBTTagCompound walletNBT = nbtTagList.getCompoundTagAt(i);
 			
-			UUID account = walletNBT.getUniqueId("account");
+			Long account = walletNBT.getLong("account");
 			double balance = walletNBT.getDouble("balance");
 			
 		}
+        nbtTagCompound.setLong("nextFreeID", nextFreeID);
 	}
 
     @Override
@@ -77,18 +79,25 @@ public class WorldSaveDataHandler extends WorldSavedData
     {
         NBTTagList nbtTagList = new NBTTagList();
 
-        for (Map.Entry<UUID, Double> entry : walletInfo.entrySet())
+        for (Map.Entry<Long, Double> entry : walletInfo.entrySet())
         {
             NBTTagCompound walletNBT = new NBTTagCompound();
-            walletNBT.setUniqueId("account", entry.getKey());
+            walletNBT.setLong("account", entry.getKey());
             walletNBT.setDouble("balance", entry.getValue());
             nbtTagList.appendTag(walletNBT);
         }
 
         nbtTagCompound.setTag("wallets", nbtTagList);
+        nbtTagCompound.setLong("nextFreeID", nextFreeID);
 
         return nbtTagCompound;
     }
+
+	public Long createNewWallet() 
+	{ 
+		markDirty();
+		return nextFreeID++; 
+	}
 	
 	
 	

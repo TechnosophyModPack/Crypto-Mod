@@ -1,7 +1,6 @@
 package common.item;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -31,13 +30,16 @@ public class ItemHardwareWallet extends Item  {
 		
 		if(!worldIn.isRemote) 
 		{
+			WorldSaveDataHandler walletData = WorldSaveDataHandler.get(worldIn);
 			ItemStack stack = playerIn.getHeldItem(handIn);
 			NBTTagCompound nbt = stack.getTagCompound();
 			if(nbt == null) { nbt = new NBTTagCompound(); }
 			
 			if(!nbt.hasKey("account"))
 			{
-				nbt.setUniqueId("account", UUID.randomUUID());
+				Long walletID = walletData.createNewWallet();
+				CryptoMod.logger.info("walletID: " + walletID);
+				nbt.setLong("account", walletID);
 				if (stack.getCount() > 1 ) 
 				{
 					stack.shrink(1);
@@ -49,13 +51,12 @@ public class ItemHardwareWallet extends Item  {
 						playerIn.dropItem(copiedStack, false);
 					}
 				}
-				else { 
-					stack.setTagCompound(nbt); 
+				else {
+					stack.setTagCompound(nbt);
 				}
 			}
 			
-			WorldSaveDataHandler walletData = WorldSaveDataHandler.get(worldIn);
-			double balance = walletData.getBalance(nbt.getUniqueId("account"));
+			double balance = walletData.getBalance(nbt.getLong("account"));
 			
 			playerIn.sendMessage(new TextComponentString("Bitcoins: " + balance));
 			CryptoMod.logger.info("Bitcoins: " + balance);
@@ -71,7 +72,14 @@ public class ItemHardwareWallet extends Item  {
     {
 		final NBTTagCompound compound = stack.getTagCompound();
 		
-		if (stack.getTagCompound() != null && compound.hasKey("account")) { tooltip.add("Address: " + stack.getTagCompound().getUniqueId("account")); }
+		/* Debugging NBT Data
+		 * if(stack.getTagCompound() == null) { CryptoMod.logger.info("NO TAGCOMPOUND FOUND"); }
+		 *
+		 *	else { CryptoMod.logger.info(stack.getTagCompound().toString());}
+		 */
+		
+		if (stack.getTagCompound() != null && compound.hasKey("account")) { tooltip.add("Address: " + stack.getTagCompound().getLong("account")); }
+		else { tooltip.add("Address: "); }
     }
 	
 	@Override
