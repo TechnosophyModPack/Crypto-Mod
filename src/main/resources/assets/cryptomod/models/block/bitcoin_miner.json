@@ -1,0 +1,13 @@
+    
+{
+    "parent": "block/orientable",
+    "textures": {
+        "particle": "cryptomod:blocks/bitcoin_miner",
+        "up": "cryptomod:blocks/bitcoin_miner",
+        "down": "cryptomod:blocks/bitcoin_miner",
+        "north": "cryptomod:blocks/bitcoin_miner",
+        "east": "cryptomod:blocks/bitcoin_miner",
+        "south": "cryptomod:blocks/bitcoin_miner",
+        "west": "cryptomod:blocks/bitcoin_miner"
+    }
+}

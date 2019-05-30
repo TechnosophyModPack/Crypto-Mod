@@ -3,12 +3,15 @@ package common;
 import org.apache.logging.log4j.Logger;
 
 import common.blocks.BitcoinMinerBlock;
+import common.handlers.GuiHandler;
 import common.item.ItemHardwareWallet;
+import common.tileentity.TileEntityBitcoinMiner;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -18,6 +21,8 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -37,14 +42,16 @@ public class CryptoMod
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
-    {
+    {    	
         logger = event.getModLog();
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        // some example code
+        
+    	NetworkRegistry.INSTANCE.registerGuiHandler(CryptoMod.instance, new GuiHandler());
+    	
         logger.info("Initializing Cryptocurrency Mod");
     }
 
@@ -72,10 +79,15 @@ public class CryptoMod
     	event.getRegistry().registerAll(
     			new BitcoinMinerBlock().setTranslationKey("bitcoin_miner").setRegistryName("bitcoin_miner").setCreativeTab(TAB)
     			);
-    	
+    	registerTileEntities();    	
     }
 
-    @ObjectHolder(value = "")
+    public static void registerTileEntities()
+    {
+    	GameRegistry.registerTileEntity(TileEntityBitcoinMiner.class, new ResourceLocation(MODID + ":bitcoin_miner"));
+    }
+    
+    @ObjectHolder(MODID)
     public static class ModBlocks {
     	public static final Block BITCOIN_MINER_BLOCK = null;
     } 
