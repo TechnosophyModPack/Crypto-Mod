@@ -10,6 +10,7 @@ import common.handlers.GuiHandler;
 import common.item.ItemHardwareWallet;
 import common.tileentity.TileEntityBitcoinMiner;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -63,7 +64,7 @@ public class CryptoMod
         logger.info("Initializing Cryptocurrency Mod");
     }
 
-    public static CreativeTabs TAB = new CreativeTabs("cryptomodtab")
+    public static CreativeTabs TAB = new CreativeTabs("cryptomod")
     {
         @Override
         public ItemStack createIcon()
@@ -78,7 +79,7 @@ public class CryptoMod
     	IForgeRegistry<Item> registry = event.getRegistry();
     	
     	helper(new ItemHardwareWallet(), "hardware_wallet", registry);
-    	helper(new ItemBlock(ModBlocks.BITCOIN_MINER_BLOCK), "bitcoin_miner", registry);
+    	helper2(ModBlocks.BITCOIN_MINER_BLOCK, registry);
     	
        /* event.getRegistry().registerAll(
                 new ItemHardwareWallet().setTranslationKey("hardware_wallet").setRegistryName("hardware_wallet").setCreativeTab(TAB),
@@ -90,9 +91,15 @@ public class CryptoMod
     @SubscribeEvent
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
     	
-    	event.getRegistry().registerAll(
-    			new BitcoinMinerBlock().setTranslationKey("bitcoin_miner").setRegistryName("bitcoin_miner").setCreativeTab(TAB)
-    			);
+    	IForgeRegistry<Block> registry = event.getRegistry();
+    	helper(new BitcoinMinerBlock(), "bitcoin_miner", registry, 100.0F, 5.0F);
+    	
+    	/*
+    	 * event.getRegistry().registerAll(
+    	 *
+    	 *		new BitcoinMinerBlock().setTranslationKey("bitcoin_miner").setRegistryName("bitcoin_miner").setCreativeTab(TAB)
+    	 *		);
+    	*/
     	registerTileEntities();    	
     }
 
