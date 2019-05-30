@@ -20,7 +20,6 @@ public class GuiHandler implements IGuiHandler {
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if(ID == CryptoMod.GUI_BITCOIN_MINER) return new GuiBitcoinMiner(player.inventory, (TileEntityBitcoinMiner)world.getTileEntity(new BlockPos(x,y,z)));
 		return null;

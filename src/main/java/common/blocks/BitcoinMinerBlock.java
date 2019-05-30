@@ -25,11 +25,14 @@ public class BitcoinMinerBlock extends Block
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{
-		if(!worldIn.isRemote)
+		if(worldIn.isRemote) {
+			return true;
+		}
+		else
 		{
 			playerIn.openGui(CryptoMod.instance, CryptoMod.GUI_BITCOIN_MINER, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			return true;
 		}
-		return true;
 	}
 	
 	@Override

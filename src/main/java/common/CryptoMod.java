@@ -92,7 +92,7 @@ public class CryptoMod
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
     	
     	IForgeRegistry<Block> registry = event.getRegistry();
-    	helper(new BitcoinMinerBlock(), "bitcoin_miner", registry, 100.0F, 5.0F);
+    	helper(new BitcoinMinerBlock(), "bitcoin_miner_block", registry, 100.0F, 5.0F);
     	
     	/*
     	 * event.getRegistry().registerAll(
