@@ -36,7 +36,7 @@ public class BitcoinMinerBlock extends Block
 	}
 	
 	@Override
-	public boolean hasTileEntity() {
+	public boolean hasTileEntity(IBlockState state) {
 		return true;
 	}
 	
