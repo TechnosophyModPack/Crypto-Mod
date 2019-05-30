@@ -2,7 +2,9 @@ package common;
 
 import org.apache.logging.log4j.Logger;
 
+import common.blocks.BitcoinMinerBlock;
 import common.item.ItemHardwareWallet;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -12,6 +14,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -25,6 +28,11 @@ public class CryptoMod
     public static final String NAME="CryptoMod";
     public static final String MODID="cryptomod";
     
+    public static final int GUI_BITCOIN_MINER = 1;
+    
+    @Instance
+    public static CryptoMod instance;
+    
     public static Logger logger;
     
     @EventHandler
@@ -37,7 +45,7 @@ public class CryptoMod
     public void init(FMLInitializationEvent event)
     {
         // some example code
-        logger.info("Initializing Cryptocurrency M@nod");
+        logger.info("Initializing Cryptocurrency Mod");
     }
 
     public static CreativeTabs TAB = new CreativeTabs("cryptomodtab")
@@ -54,15 +62,24 @@ public class CryptoMod
 
         event.getRegistry().registerAll(
                 new ItemHardwareWallet().setTranslationKey("hardware_wallet").setRegistryName("hardware_wallet").setCreativeTab(TAB)
-        );
+        		);
 
     }
+    
+    @SubscribeEvent
+    public static void onBlockRegister(RegistryEvent.Register<Block> event) {
+    	
+    	event.getRegistry().registerAll(
+    			new BitcoinMinerBlock().setTranslationKey("bitcoin_miner").setRegistryName("bitcoin_miner").setCreativeTab(TAB)
+    			);
+    	
+    }
 
-/*    @ObjectHolder(value = "")
+    @ObjectHolder(value = "")
     public static class ModBlocks {
-    	public static final Block BITCOIN_MINER_BLOCK = new BitcoinMinerBlock();
+    	public static final Block BITCOIN_MINER_BLOCK = null;
     } 
-*/
+
     
     @ObjectHolder(MODID)
     public static class ModItems {
