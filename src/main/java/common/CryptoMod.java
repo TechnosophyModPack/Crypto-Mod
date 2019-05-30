@@ -1,5 +1,8 @@
 package common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.Logger;
 
 import common.blocks.BitcoinMinerBlock;
@@ -10,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -25,6 +29,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod(modid = CryptoMod.MODID, name=CryptoMod.NAME)
 @Mod.EventBusSubscriber
@@ -34,6 +39,9 @@ public class CryptoMod
     public static final String MODID="cryptomod";
     
     public static final int GUI_BITCOIN_MINER = 1;
+    
+    public static final List<Item> MOD_ITEMS = new ArrayList<>();
+    public static final List<Block> MOD_BLOCKS = new ArrayList<>();
     
     @Instance
     public static CryptoMod instance;
@@ -67,10 +75,16 @@ public class CryptoMod
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
 
-        event.getRegistry().registerAll(
-                new ItemHardwareWallet().setTranslationKey("hardware_wallet").setRegistryName("hardware_wallet").setCreativeTab(TAB)
+    	IForgeRegistry<Item> registry = event.getRegistry();
+    	
+    	helper(new ItemHardwareWallet(), "hardware_wallet", registry);
+    	helper(new ItemBlock(ModBlocks.BITCOIN_MINER_BLOCK), "bitcoin_miner", registry);
+    	
+       /* event.getRegistry().registerAll(
+                new ItemHardwareWallet().setTranslationKey("hardware_wallet").setRegistryName("hardware_wallet").setCreativeTab(TAB),
+        		new ItemBlock(ModBlocks.BITCOIN_MINER_BLOCK).setTranslationKey("bitcoin_miner").setRegistryName("bitcoin_miner").setCreativeTab(TAB)
         		);
-
+        */
     }
     
     @SubscribeEvent
@@ -98,13 +112,52 @@ public class CryptoMod
         public static final Item HARDWARE_WALLET = null;
     }
 
-    @Mod.EventBusSubscriber(value= Side.CLIENT, modid=MODID)
+    @SubscribeEvent
+    public static void registerModels(ModelRegistryEvent event) {
+      for (Item item : MOD_ITEMS)
+        helper3(item);
+      for (Block block : MOD_BLOCKS)
+        helper3(Item.getItemFromBlock(block));
+    }
+    
+/*    @Mod.EventBusSubscriber(value= Side.CLIENT, modid=MODID)
     public static class ClientEvents
     {
         @SubscribeEvent
         public static void onRegisterModels(ModelRegistryEvent event)
         {
             ModelLoader.setCustomModelResourceLocation(ModItems.HARDWARE_WALLET, 0, new ModelResourceLocation(ModItems.HARDWARE_WALLET.getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.BITCOIN_MINER_BLOCK), 0, new ModelResourceLocation(ModBlocks.BITCOIN_MINER_BLOCK.getRegistryName(), "inventory"));
         }
     }
+*/
+    
+    private static void helper(Block block, String name, IForgeRegistry<Block> registry, float blastResistance, float hardness) {
+        block.setRegistryName(name);
+        block.setTranslationKey(block.getRegistryName().toString());
+        block.setCreativeTab(TAB);
+        block.setResistance(blastResistance);
+        block.setHardness(hardness);
+        MOD_BLOCKS.add(block);
+        registry.register(block);
+      }
+    
+    private static void helper(Item item, String name, IForgeRegistry<Item> registry) {
+        item.setRegistryName(name);
+        item.setTranslationKey(item.getRegistryName().toString());
+        item.setCreativeTab(TAB);
+        MOD_ITEMS.add(item);
+        registry.register(item);
+      }
+
+      private static void helper2(Block block, IForgeRegistry<Item> registry) {
+        ItemBlock itemBlock = new ItemBlock(block);
+        itemBlock.setRegistryName(block.getRegistryName());
+        registry.register(itemBlock);
+      }
+      
+      private static void helper3(Item item) {
+    	    ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+    	  }
+    
 }
