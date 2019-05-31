@@ -166,5 +166,5 @@ public class CryptoMod
       private static void helper3(Item item) {
     	    ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
     	  }
-    
+      
 }
