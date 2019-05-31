@@ -93,7 +93,7 @@ public class WorldSaveDataHandler extends WorldSavedData
         return nbtTagCompound;
     }
 
-	public Long createNewWallet() 
+	public long createNewWallet() 
 	{ 
 		markDirty();
 		return nextFreeID++; 

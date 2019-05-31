@@ -37,7 +37,7 @@ public class ItemHardwareWallet extends Item  {
 			
 			if(!nbt.hasKey("account"))
 			{
-				Long walletID = walletData.createNewWallet();
+				long walletID = walletData.createNewWallet();
 				CryptoMod.logger.info("walletID: " + walletID);
 				nbt.setLong("account", walletID);
 				if (stack.getCount() > 1 ) 
@@ -78,7 +78,7 @@ public class ItemHardwareWallet extends Item  {
 		 *	else { CryptoMod.logger.info(stack.getTagCompound().toString());}
 		 */
 		
-		if (stack.getTagCompound() != null && compound.hasKey("account")) { tooltip.add("Address: " + stack.getTagCompound().getLong("account")); }
+		if (compound != null && compound.hasKey("account")) { tooltip.add("Address: " + stack.getTagCompound().getLong("account")); }
 		else { tooltip.add("Address: "); }
     }
 	

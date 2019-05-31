@@ -10,6 +10,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -19,6 +20,8 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 	private String customName;
 	public int energy = storage.getEnergyStored();
 	public ItemStackHandler handler = new ItemStackHandler(1);
+	public long walletAddress = 0L;
+	
 	/* 
 	 *{
 	 *	@Override
