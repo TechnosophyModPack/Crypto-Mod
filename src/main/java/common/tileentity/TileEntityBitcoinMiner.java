@@ -69,6 +69,7 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 		//compound.setIntegeter("CookTime", this.cookTime);
 		compound.setInteger("GuiEnergy", this.energy);
 		compound.setString("Name", getDisplayName().toString());
+		compound.setLong("account", this.walletAddress);
 		this.storage.writeToNBT(compound);
 		return compound;
 	}
@@ -81,6 +82,7 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 		//this.cooktime = compound.getInteger("CookTime");
 		this.energy = compound.getInteger("GuiEnergy");
 		this.customName = compound.getString("Name");
+		this.walletAddress = compound.getLong("account");
 		this.storage.readFromNBT(compound);
 	}
 	
