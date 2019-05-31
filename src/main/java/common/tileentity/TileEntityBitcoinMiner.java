@@ -21,24 +21,33 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 	public int energy = storage.getEnergyStored();
 	public ItemStackHandler handler = new ItemStackHandler(1);
 	public long walletAddress = 0L;
+	public boolean isCurrentlyMining = false;
+	public int localTicksSinceLastBlock = 0;
 	
 	/* 
-	 *{
 	 *	@Override
 	 *	protected void onContentsChanged(int slot) {
 	 *		if(!world.isRemote) {
 	 *			//Put logic for filling wallet placed in machine with available/mined Bitcoins
 	 *		}
 	 *	}
-	 *}
 	 */	
 	
 	@Override
 	public void update()
 	{
+		if(world.isBlockPowered(pos)) energy += 100;
+		
 		if(!handler.getStackInSlot(0).isEmpty()) 
 		{
 			//if (handler.getStackInSlot(0) == ItemHardwareWallet)
+		}
+		
+		if(energy > 200 && !world.isBlockPowered(pos)) {
+			isCurrentlyMining = true;
+			energy -= 200;
+			
+			
 		}
 		
 		this.storage.receiveEnergy(100, false);
@@ -66,7 +75,6 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 	{
 		super.writeToNBT(compound);
 		compound.setTag("Inventory", this.handler.serializeNBT());
-		//compound.setIntegeter("CookTime", this.cookTime);
 		compound.setInteger("GuiEnergy", this.energy);
 		compound.setString("Name", getDisplayName().toString());
 		compound.setLong("account", this.walletAddress);
@@ -107,6 +115,8 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 		{
 		case 0:
 			return this.energy;
+		//case 1:
+			//return this.walletAddress;
 		//case 1:
 			//return this.cookTime;
 		default:
