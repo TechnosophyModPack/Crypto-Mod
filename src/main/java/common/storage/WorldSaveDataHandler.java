@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import common.CryptoMod;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -20,6 +21,8 @@ public class WorldSaveDataHandler extends WorldSavedData
 	private Map<Long, Double> walletInfo = new HashMap<>();
 	private int lastID;
 	private long nextFreeID = 0;
+	private int currentlyMining = 0;
+	private int ticksSinceLastBlock = 0;
 	
 	public WorldSaveDataHandler() 
 	{
@@ -43,19 +46,49 @@ public class WorldSaveDataHandler extends WorldSavedData
 		return instance;
 	}
 	
+	public int getCurrentlyMining() 
+	{
+		return currentlyMining;
+	}
+	
+	public void setCurrentlyMining(int amt)
+	{
+		currentlyMining = amt;
+	}
+	
+	public int getTicksSinceLastBlock()
+	{
+		return ticksSinceLastBlock;
+	}
+	
+	public void setTicksSinceLastBlock(int amount)
+	{
+		ticksSinceLastBlock = amount;
+		this.markDirty();
+	}
 
 	public Double getBalance(Long account)
 	{
-		if (account == null)
+		if (account == null || !walletInfo.containsKey(account))
 		{
 			return null;
 		}
-		if (!walletInfo.containsKey(account))
+		/*if (!walletInfo.containsKey(account))
 		{
 			walletInfo.put(account, 0.0);
 			this.markDirty();
-		}
+		} */
 		return walletInfo.get(account);
+	}
+	
+	public void setBalance(Long account, Double newBalance)
+	{
+		if (account != null && walletInfo.containsKey(account))
+		{
+			walletInfo.put(account, newBalance);
+			this.markDirty();
+		}
+		CryptoMod.logger.info("Invalid or Null account called for setBalance!");
 	}
 	
 	@Override
@@ -96,6 +129,7 @@ public class WorldSaveDataHandler extends WorldSavedData
 	public long createNewWallet() 
 	{ 
 		markDirty();
+		walletInfo.put(nextFreeID + 1, 0.0);
 		return nextFreeID++; 
 	}
 	
