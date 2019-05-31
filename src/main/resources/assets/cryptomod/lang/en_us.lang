@@ -2,3 +2,7 @@
 item.hardware_wallet.name=Hardware Wallet
 //Tabs
 itemGroup.cryptomodtab=Cryptocurrency
+//Containers
+container.bitcoin_miner=Bitcoin Miner
+//TileEntities
+tile.cryptomod:bitcoin_miner.name=Bitcoin Miner
