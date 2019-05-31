@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
-import common.blocks.BitcoinMinerBlock;
+import common.blocks.BlockBitcoinMiner;
 import common.handlers.GuiHandler;
 import common.item.ItemHardwareWallet;
 import common.tileentity.TileEntityBitcoinMiner;
@@ -16,6 +16,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -79,7 +80,7 @@ public class CryptoMod
     	IForgeRegistry<Item> registry = event.getRegistry();
     	
     	helper(new ItemHardwareWallet(), "hardware_wallet", registry);
-    	helper2(ModBlocks.BITCOIN_MINER_BLOCK, registry);
+    	helper2(ModBlocks.BITCOIN_MINER, registry);
     	
        /* event.getRegistry().registerAll(
                 new ItemHardwareWallet().setTranslationKey("hardware_wallet").setRegistryName("hardware_wallet").setCreativeTab(TAB),
@@ -92,7 +93,7 @@ public class CryptoMod
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
     	
     	IForgeRegistry<Block> registry = event.getRegistry();
-    	helper(new BitcoinMinerBlock(), "bitcoin_miner_block", registry, 100.0F, 5.0F);
+    	helper(new BlockBitcoinMiner(), "bitcoin_miner", registry, 100.0F, 5.0F);
     	
     	/*
     	 * event.getRegistry().registerAll(
@@ -110,7 +111,7 @@ public class CryptoMod
     
     @ObjectHolder(MODID)
     public static class ModBlocks {
-    	public static final Block BITCOIN_MINER_BLOCK = null;
+    	public static final Block BITCOIN_MINER = null;
     } 
 
     
@@ -167,4 +168,11 @@ public class CryptoMod
     	    ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
     	  }
       
+      public static NBTTagCompound getOrCreateTag(ItemStack stack) {
+          if (!stack.hasTagCompound()) {
+              stack.setTagCompound(new NBTTagCompound());
+          }
+          return stack.getTagCompound();
+      }
+    
 }
