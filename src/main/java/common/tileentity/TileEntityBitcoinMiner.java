@@ -101,7 +101,6 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 	{
 		super.readFromNBT(compound);
 		this.handler.deserializeNBT(compound.getCompoundTag("Inventory"));
-		//this.cooktime = compound.getInteger("CookTime");
 		this.energy = compound.getInteger("GuiEnergy");
 		this.customName = compound.getString("Name");
 		this.walletAddress = compound.getLong("account");
@@ -129,10 +128,6 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 		{
 		case 0:
 			return this.energy;
-		//case 1:
-			//return this.walletAddress;
-		//case 1:
-			//return this.cookTime;
 		default:
 			return 0;
 		}
@@ -144,8 +139,6 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 		{
 		case 0:
 			this.energy = value;
-		//case 1:
-			//this.cookTime = value;
 		}
 	}
 	

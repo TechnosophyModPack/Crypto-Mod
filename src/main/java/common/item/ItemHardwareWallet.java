@@ -72,12 +72,6 @@ public class ItemHardwareWallet extends Item  {
     {
 		final NBTTagCompound compound = stack.getTagCompound();
 		
-		/* Debugging NBT Data
-		 * if(stack.getTagCompound() == null) { CryptoMod.logger.info("NO TAGCOMPOUND FOUND"); }
-		 *
-		 *	else { CryptoMod.logger.info(stack.getTagCompound().toString());}
-		 */
-		
 		if (compound != null && compound.hasKey("account")) { tooltip.add("Address: " + stack.getTagCompound().getLong("account")); }
 		else { tooltip.add("Address: "); }
     }
@@ -88,7 +82,6 @@ public class ItemHardwareWallet extends Item  {
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		
-		//CryptoMod.logger.info("Ticking Item");
 		
 	}
 	
