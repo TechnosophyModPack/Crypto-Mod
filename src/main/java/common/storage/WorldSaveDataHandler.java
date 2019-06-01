@@ -1,7 +1,9 @@
 package common.storage;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -107,40 +109,56 @@ public class WorldSaveDataHandler extends WorldSavedData
 		timeMinedInfo.clear();
 	}
 	
+	
 	@Override
-	public void readFromNBT(NBTTagCompound nbtTagCompound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound)
+	{
+		NBTTagCompound bitcoinData = new NBTTagCompound();		
+		NBTTagList balancesCompoundList = new NBTTagList();
+		NBTTagList miningTimeCompoundList = new NBTTagList();
 		
-		NBTTagList nbtTagList = nbtTagCompound.getTagList("wallets", Constants.NBT.TAG_COMPOUND);
-		
-		for (int i = 0; i < nbtTagList.tagCount(); ++i)
+		walletInfo.forEach((account, balance) -> {
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setLong("account", account);
+			nbt.setDouble("balance", balance);
+			balancesCompoundList.appendTag(nbt);
+		});
+		timeMinedInfo.forEach((account, ticksMinedFor) -> {
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setLong("account", account);
+			nbt.setInteger("ticksMinedFor", ticksMinedFor);
+			miningTimeCompoundList.appendTag(nbt);
+		}); 
+
+		bitcoinData.setTag("balancesCompoundList", balancesCompoundList);
+		bitcoinData.setTag("miningTimeCompoundList", miningTimeCompoundList);
+		nbtTagCompound.setTag("bitcoinData", bitcoinData);
+		nbtTagCompound.setLong("nextFreeID", nextFreeID);
+		return nbtTagCompound;
+	}	
+	
+	@Override
+	public void readFromNBT(NBTTagCompound nbtTagCompound) 
+	{
+		NBTTagCompound bitcoinData = nbtTagCompound.getCompoundTag("bitcoinData");
+		NBTTagList balancesCompoundList = bitcoinData.getTagList("balancesCompoundList", Constants.NBT.TAG_COMPOUND);
+		NBTTagList miningTimeCompoundList = bitcoinData.getTagList("miningTimeCompoundList", Constants.NBT.TAG_COMPOUND);
+		for(int i = 0; i < balancesCompoundList.tagCount(); ++i)
 		{
-			NBTTagCompound walletNBT = nbtTagList.getCompoundTagAt(i);
-			
-			Long account = walletNBT.getLong("account");
-			double balance = walletNBT.getDouble("balance");
-			
+			NBTTagCompound balancesNBT = balancesCompoundList.getCompoundTagAt(i);
+			Long account = balancesNBT.getLong("account");
+			double balance = balancesNBT.getDouble("balance");
+			walletInfo.put(account, balance);
 		}
-        nbtTagCompound.setLong("nextFreeID", nextFreeID);
+		for(int i = 0; i < miningTimeCompoundList.tagCount(); ++i)
+		{
+			NBTTagCompound miningTimeNBT = miningTimeCompoundList.getCompoundTagAt(i);
+			Long account = miningTimeNBT.getLong("account");
+			Integer balance = miningTimeNBT.getInteger("ticksMinedFor");
+			timeMinedInfo.put(account, balance);
+		}
+		nextFreeID = nbtTagCompound.getLong("nextFreeID");
 	}
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound)
-    {
-        NBTTagList nbtTagList = new NBTTagList();
-
-        for (Map.Entry<Long, Double> entry : walletInfo.entrySet())
-        {
-            NBTTagCompound walletNBT = new NBTTagCompound();
-            walletNBT.setLong("account", entry.getKey());
-            walletNBT.setDouble("balance", entry.getValue());
-            nbtTagList.appendTag(walletNBT);
-        }
-
-        nbtTagCompound.setTag("wallets", nbtTagList);
-        nbtTagCompound.setLong("nextFreeID", nextFreeID);
-
-        return nbtTagCompound;
-    }
 
 	public long createNewWallet() 
 	{ 
