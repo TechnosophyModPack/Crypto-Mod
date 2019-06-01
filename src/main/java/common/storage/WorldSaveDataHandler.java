@@ -116,7 +116,6 @@ public class WorldSaveDataHandler extends WorldSavedData
 		NBTTagCompound bitcoinData = new NBTTagCompound();		
 		NBTTagList balancesCompoundList = new NBTTagList();
 		NBTTagList miningTimeCompoundList = new NBTTagList();
-		
 		walletInfo.forEach((account, balance) -> {
 			NBTTagCompound nbt = new NBTTagCompound();
 			nbt.setLong("account", account);
@@ -129,7 +128,6 @@ public class WorldSaveDataHandler extends WorldSavedData
 			nbt.setInteger("ticksMinedFor", ticksMinedFor);
 			miningTimeCompoundList.appendTag(nbt);
 		}); 
-
 		bitcoinData.setTag("balancesCompoundList", balancesCompoundList);
 		bitcoinData.setTag("miningTimeCompoundList", miningTimeCompoundList);
 		nbtTagCompound.setTag("bitcoinData", bitcoinData);
