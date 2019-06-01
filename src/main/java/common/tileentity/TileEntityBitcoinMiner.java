@@ -57,7 +57,11 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 			}
 			CryptoMod.logger.info("Ticks Since Last Bitcoin Block: " + worldSaveHandler.getTicksSinceLastBlock());
 			energy -= 200;
-			
+			worldSaveHandler.setTimeMined(walletAddress, worldSaveHandler.getTimeMined(walletAddress) + 1);
+			if(worldSaveHandler.getTicksSinceLastBlock() >= 12000) {
+				worldSaveHandler.payoutRewards();
+				
+			}
 		}
 		
 		//this.storage.receiveEnergy(100, false);

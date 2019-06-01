@@ -15,9 +15,7 @@ import net.minecraftforge.common.util.Constants;
 
 public class WorldSaveDataHandler extends WorldSavedData
 {
-
 	private static final String StorageKey = "bitcoinStorageManager";
-	
 	private Map<Long, Double> walletInfo = new HashMap<>();
 	private Map<Long, Integer> timeMinedInfo = new HashMap<>();
 	private int lastID;
@@ -95,6 +93,19 @@ public class WorldSaveDataHandler extends WorldSavedData
 		CryptoMod.logger.info("Invalid or Null account called for set balance");
 	}
 	
+	public void payoutRewards() 
+	{
+		for (Map.Entry<Long, Integer> entry : timeMinedInfo.entrySet()) 
+		{
+			long address = entry.getKey();
+			int ticksMinedFor = entry.getValue();
+			
+			double reward = 10 * (ticksMinedFor / 1200);
+			
+			setBalance(address, getBalance(address) + reward);
+		}
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		
@@ -136,6 +147,8 @@ public class WorldSaveDataHandler extends WorldSavedData
 		walletInfo.put(nextFreeID + 1, 0.0);
 		return nextFreeID++; 
 	}
+
+
 	
 	
 	
