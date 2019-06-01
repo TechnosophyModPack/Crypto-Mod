@@ -104,6 +104,7 @@ public class WorldSaveDataHandler extends WorldSavedData
 			
 			setBalance(address, getBalance(address) + reward);
 		}
+		timeMinedInfo.clear();
 	}
 	
 	@Override
