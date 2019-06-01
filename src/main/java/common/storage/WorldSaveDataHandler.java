@@ -19,9 +19,9 @@ public class WorldSaveDataHandler extends WorldSavedData
 	private static final String StorageKey = "bitcoinStorageManager";
 	
 	private Map<Long, Double> walletInfo = new HashMap<>();
+	private Map<Long, Integer> timeMinedInfo = new HashMap<>();
 	private int lastID;
 	private long nextFreeID = 0;
-	private int currentlyMining = 0;
 	private int ticksSinceLastBlock = 0;
 	
 	public WorldSaveDataHandler() 
@@ -46,16 +46,6 @@ public class WorldSaveDataHandler extends WorldSavedData
 		return instance;
 	}
 	
-	public int getCurrentlyMining() 
-	{
-		return currentlyMining;
-	}
-	
-	public void setCurrentlyMining(int amt)
-	{
-		currentlyMining = amt;
-	}
-	
 	public int getTicksSinceLastBlock()
 	{
 		return ticksSinceLastBlock;
@@ -73,11 +63,6 @@ public class WorldSaveDataHandler extends WorldSavedData
 		{
 			return null;
 		}
-		/*if (!walletInfo.containsKey(account))
-		{
-			walletInfo.put(account, 0.0);
-			this.markDirty();
-		} */
 		return walletInfo.get(account);
 	}
 	
@@ -89,6 +74,25 @@ public class WorldSaveDataHandler extends WorldSavedData
 			this.markDirty();
 		}
 		CryptoMod.logger.info("Invalid or Null account called for setBalance!");
+	}
+	
+	public int getTimeMined(Long account)
+	{
+		if (account == null || !timeMinedInfo.containsKey(account))
+		{
+			return 0;
+		}
+		return timeMinedInfo.get(account);
+	}
+	
+	public void setTimeMined(Long account, int amount)
+	{
+		if (account != null)
+		{
+			timeMinedInfo.put(account, amount);
+			this.markDirty();
+		}
+		CryptoMod.logger.info("Invalid or Null account called for set balance");
 	}
 	
 	@Override

@@ -1,6 +1,8 @@
 package common.tileentity;
 
+import common.CryptoMod;
 import common.energy.CryptoEnergyStorage;
+import common.storage.WorldSaveDataHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -23,19 +25,22 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 	public long walletAddress = 0L;
 	public boolean isCurrentlyMining = false;
 	public int localTicksSinceLastBlock = 0;
+
 	
-	/* 
-	 *	@Override
-	 *	protected void onContentsChanged(int slot) {
-	 *		if(!world.isRemote) {
-	 *			//Put logic for filling wallet placed in machine with available/mined Bitcoins
-	 *		}
-	 *	}
-	 */	
-	
-	@Override
 	public void update()
 	{
+		WorldSaveDataHandler worldSaveHandler = WorldSaveDataHandler.get(this.world);
+		if(localTicksSinceLastBlock < worldSaveHandler.getTicksSinceLastBlock())
+		{
+			if(worldSaveHandler.getTicksSinceLastBlock() - localTicksSinceLastBlock > 1)
+			{
+				localTicksSinceLastBlock = worldSaveHandler.getTicksSinceLastBlock();
+			}
+		}
+		if(localTicksSinceLastBlock > worldSaveHandler.getTicksSinceLastBlock())
+		{
+			localTicksSinceLastBlock = worldSaveHandler.getTicksSinceLastBlock();
+		}
 		if(world.isBlockPowered(pos)) energy += 100;
 		
 		if(!handler.getStackInSlot(0).isEmpty()) 
@@ -43,15 +48,20 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 			//if (handler.getStackInSlot(0) == ItemHardwareWallet)
 		}
 		
-		if(energy > 200 && !world.isBlockPowered(pos)) {
+		if(energy > 200 /* && !world.isBlockPowered(pos)*/) {
 			isCurrentlyMining = true;
+			if(localTicksSinceLastBlock == worldSaveHandler.getTicksSinceLastBlock())
+			{
+				localTicksSinceLastBlock++;
+				worldSaveHandler.setTicksSinceLastBlock(worldSaveHandler.getTicksSinceLastBlock() + 1);
+			}
+			CryptoMod.logger.info("Ticks Since Last Bitcoin Block: " + worldSaveHandler.getTicksSinceLastBlock());
 			energy -= 200;
-			
 			
 		}
 		
-		this.storage.receiveEnergy(100, false);
-		this.storage.extractEnergy(0, false);
+		//this.storage.receiveEnergy(100, false);
+		//this.storage.extractEnergy(0, false);
 	}
 	
 	@Override
@@ -139,6 +149,14 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 	{
 		return this.world.getTileEntity(this.pos)!= this ? false : player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D; 	
 	}
-
+	
+	/* 
+	 *	@Override
+	 *	protected void onContentsChanged(int slot) {
+	 *		if(!world.isRemote) {
+	 *			//Put logic for filling wallet placed in machine with available/mined Bitcoins
+	 *		}
+	 *	}
+	 */	
 	
 }

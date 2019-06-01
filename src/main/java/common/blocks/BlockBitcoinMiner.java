@@ -72,7 +72,6 @@ public class BlockBitcoinMiner extends Block
 			}
 		}
 	}
-	
 
 	@Override
 	public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack stack) 
