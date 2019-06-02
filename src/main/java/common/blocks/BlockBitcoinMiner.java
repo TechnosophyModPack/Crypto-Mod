@@ -65,10 +65,12 @@ public class BlockBitcoinMiner extends Block
 		}
 		else 
 		{
+			CryptoMod.logger.info("Bitcoin Miner did NOT have an NBT tag on placed");
 			if(te instanceof TileEntityBitcoinMiner) 
 			{
+				CryptoMod.logger.info("Bitcoin Miner IS an instance of BitcoinMiner TE");
 				WorldSaveDataHandler walletData = WorldSaveDataHandler.get(worldIn);
-				((TileEntityBitcoinMiner) te).walletAddress = walletData.createNewWallet();
+				((TileEntityBitcoinMiner) te).setAddress(walletData.createNewWallet());
 			}
 		}
 	}

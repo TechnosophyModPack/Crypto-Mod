@@ -66,14 +66,19 @@ public class WorldSaveDataHandler extends WorldSavedData
 		return walletInfo.get(account);
 	}
 	
-	public void setBalance(Long account, Double newBalance)
+	public void setBalance(long account, double newBalance)
 	{
-		if (account != null && walletInfo.containsKey(account))
+		if (account >= 0L && walletInfo.containsKey(account))
 		{
 			walletInfo.put(account, newBalance);
 			this.markDirty();
 		}
-		CryptoMod.logger.info("Invalid or Null account called for setBalance!");
+		else
+		{
+			CryptoMod.logger.info("Invalid or Null account called for setBalance!");
+			CryptoMod.logger.info(account);
+			CryptoMod.logger.info(newBalance);
+		}
 	}
 	
 	public int getTimeMined(Long account)
@@ -85,28 +90,38 @@ public class WorldSaveDataHandler extends WorldSavedData
 		return timeMinedInfo.get(account);
 	}
 	
-	public void setTimeMined(Long account, int amount)
+	public void setTimeMined(long account, int amount)
 	{
-		if (account != null)
+		if (account >= 0L)
 		{
 			timeMinedInfo.put(account, amount);
 			this.markDirty();
 		}
-		CryptoMod.logger.info("Invalid or Null account called for set balance");
+		else 
+		{
+			CryptoMod.logger.info("Invalid or Null account called for set Time Mined");
+			CryptoMod.logger.info(account);	
+		}
 	}
 	
 	public void payoutRewards() 
 	{
+		int totalTicksMined = 0;
+		for (Map.Entry<Long, Integer> entry : timeMinedInfo.entrySet()) 
+		{
+			int ticksMinedFor = entry.getValue();
+			totalTicksMined += ticksMinedFor;
+		}
 		for (Map.Entry<Long, Integer> entry : timeMinedInfo.entrySet()) 
 		{
 			long address = entry.getKey();
 			int ticksMinedFor = entry.getValue();
-			
-			double reward = 10 * (ticksMinedFor / 1200);
-			
-			setBalance(address, getBalance(address) + reward);
+			double percentMined = (ticksMinedFor / totalTicksMined);
+			setBalance(address, 10 * percentMined);
 		}
 		timeMinedInfo.clear();
+		ticksSinceLastBlock = 0;
+		this.markDirty();
 	}
 	
 	
@@ -121,12 +136,14 @@ public class WorldSaveDataHandler extends WorldSavedData
 			nbt.setLong("account", account);
 			nbt.setDouble("balance", balance);
 			balancesCompoundList.appendTag(nbt);
+			CryptoMod.logger.info("Account: " + account + " Balance: " + balance + " was written to disk");
 		});
 		timeMinedInfo.forEach((account, ticksMinedFor) -> {
 			NBTTagCompound nbt = new NBTTagCompound();
 			nbt.setLong("account", account);
 			nbt.setInteger("ticksMinedFor", ticksMinedFor);
 			miningTimeCompoundList.appendTag(nbt);
+			CryptoMod.logger.info("Account: " + account + " time mined: " + ticksMinedFor + "was written to disk");
 		}); 
 		bitcoinData.setTag("balancesCompoundList", balancesCompoundList);
 		bitcoinData.setTag("miningTimeCompoundList", miningTimeCompoundList);
@@ -147,13 +164,15 @@ public class WorldSaveDataHandler extends WorldSavedData
 			Long account = balancesNBT.getLong("account");
 			double balance = balancesNBT.getDouble("balance");
 			walletInfo.put(account, balance);
+			CryptoMod.logger.info("Account: " + account + " Balance: " + balance + " was read from disk");
 		}
 		for(int i = 0; i < miningTimeCompoundList.tagCount(); ++i)
 		{
 			NBTTagCompound miningTimeNBT = miningTimeCompoundList.getCompoundTagAt(i);
 			Long account = miningTimeNBT.getLong("account");
-			Integer balance = miningTimeNBT.getInteger("ticksMinedFor");
-			timeMinedInfo.put(account, balance);
+			Integer ticksMinedFor = miningTimeNBT.getInteger("ticksMinedFor");
+			timeMinedInfo.put(account, ticksMinedFor);
+			CryptoMod.logger.info("Account: " + account + " time mined: " + ticksMinedFor + "was read from disk");
 		}
 		nextFreeID = nbtTagCompound.getLong("nextFreeID");
 	}
@@ -161,7 +180,7 @@ public class WorldSaveDataHandler extends WorldSavedData
 	public long createNewWallet() 
 	{ 
 		markDirty();
-		walletInfo.put(nextFreeID + 1, 0.0);
+		walletInfo.put(nextFreeID, 0.0);
 		return nextFreeID++; 
 	}
 

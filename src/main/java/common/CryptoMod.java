@@ -106,7 +106,7 @@ public class CryptoMod
 
     public static void registerTileEntities()
     {
-    	GameRegistry.registerTileEntity(TileEntityBitcoinMiner.class, new ResourceLocation(MODID + ":bitcoin_miner"));
+    	GameRegistry.registerTileEntity(TileEntityBitcoinMiner.class, new ResourceLocation(MODID, "bitcoin_miner"));
     }
     
     @ObjectHolder(MODID)

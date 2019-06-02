@@ -57,11 +57,14 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 			}
 			CryptoMod.logger.info("Ticks Since Last Bitcoin Block: " + worldSaveHandler.getTicksSinceLastBlock());
 			energy -= 200;
-			worldSaveHandler.setTimeMined(walletAddress, worldSaveHandler.getTimeMined(walletAddress) + 1);
-			if(worldSaveHandler.getTicksSinceLastBlock() >= 12000) {
+			worldSaveHandler.setTimeMined(this.getAddress(), worldSaveHandler.getTimeMined(this.getAddress()) + 1);
+			if(worldSaveHandler.getTicksSinceLastBlock() >= 200) {
 				worldSaveHandler.payoutRewards();
-				
 			}
+		}
+		else
+		{
+			isCurrentlyMining = false;
 		}
 		
 		//this.storage.receiveEnergy(100, false);
@@ -85,31 +88,18 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) 
-	{
-		super.writeToNBT(compound);
-		compound.setTag("Inventory", this.handler.serializeNBT());
-		compound.setInteger("GuiEnergy", this.energy);
-		compound.setString("Name", getDisplayName().toString());
-		compound.setLong("account", this.walletAddress);
-		this.storage.writeToNBT(compound);
-		return compound;
-	}
-	
-	@Override
-	public void readFromNBT(NBTTagCompound compound) 
-	{
-		super.readFromNBT(compound);
-		this.handler.deserializeNBT(compound.getCompoundTag("Inventory"));
-		this.energy = compound.getInteger("GuiEnergy");
-		this.customName = compound.getString("Name");
-		this.walletAddress = compound.getLong("account");
-		this.storage.readFromNBT(compound);
-	}
-	
-	@Override
 	public ITextComponent getDisplayName() {
 		return new TextComponentTranslation("container.bitcoin_miner");
+	}
+	
+	public long getAddress()
+	{
+		return this.walletAddress;
+	}
+	
+	public void setAddress(long newAddr)
+	{
+		this.walletAddress = newAddr;
 	}
 	
 	public int getEnergyStored()
@@ -145,6 +135,30 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 	public boolean isUsableByPlayer(EntityPlayer player)
 	{
 		return this.world.getTileEntity(this.pos)!= this ? false : player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D; 	
+	}
+	
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) 
+	{
+		super.writeToNBT(compound);
+		compound.setTag("Inventory", this.handler.serializeNBT());
+		compound.setInteger("GuiEnergy", this.energy);
+		compound.setString("Name", getDisplayName().toString());
+		compound.setLong("account", this.walletAddress);
+		this.storage.writeToNBT(compound);
+		return compound;
+	}
+	
+	@Override
+	public void readFromNBT(NBTTagCompound compound) 
+	{
+		super.readFromNBT(compound);
+		this.handler.deserializeNBT(compound.getCompoundTag("Inventory"));
+		this.energy = compound.getInteger("GuiEnergy");
+		this.customName = compound.getString("Name");
+		this.walletAddress = compound.getLong("account");
+		this.storage.readFromNBT(compound);
+		CryptoMod.logger.info("Energy: " + compound.getInteger("GuiEnergy") + " Wallet Address: " + compound.getLong("account"));
 	}
 	
 	/* 

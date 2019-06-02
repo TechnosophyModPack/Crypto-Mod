@@ -2,6 +2,7 @@ package common.gui;
 
 import common.CryptoMod;
 import common.container.ContainerBitcoinMiner;
+import common.storage.WorldSaveDataHandler;
 import common.tileentity.TileEntityBitcoinMiner;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -23,12 +24,13 @@ public class GuiBitcoinMiner extends GuiContainer {
 	
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-
+		WorldSaveDataHandler worldSaveHandler = WorldSaveDataHandler.get(this.tileentity.getWorld());
 		String tileName = this.tileentity.getDisplayName().getUnformattedText();
 		this.fontRenderer.drawString(tileName, (this.xSize / 2 - this.fontRenderer.getStringWidth(tileName) / 2) - 5, 6, 4210752);
 		this.fontRenderer.drawString("Energy Buffer : ", 7, this.ySize - 96 + 2, 4210752);
 		this.fontRenderer.drawString(Integer.toString(this.tileentity.getEnergyStored()), 115, 72, 4210752);
-		this.fontRenderer.drawString("Bitcoins: ", 35, 58, 4210752);
+		this.fontRenderer.drawString("Address: " + this.tileentity.getAddress(), 15, 18, 4210752);
+		this.fontRenderer.drawString("Bitcoins: " + worldSaveHandler.getBalance(this.tileentity.getAddress()), 15, 58, 4210752);
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class GuiBitcoinMiner extends GuiContainer {
 
 		int k = this.getEnergyStoredScaled(75);
 		this.drawTexturedModalRect(this.guiLeft + 152, this.guiTop + 7, 176, 32, 16, 76 - k);
-		
+
 	}
 	
 	private int getEnergyStoredScaled(int pixels)
