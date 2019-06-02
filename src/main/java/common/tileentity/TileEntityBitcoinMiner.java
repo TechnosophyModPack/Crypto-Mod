@@ -4,7 +4,10 @@ import common.CryptoMod;
 import common.energy.CryptoEnergyStorage;
 import common.storage.WorldSaveDataHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -130,6 +133,21 @@ public class TileEntityBitcoinMiner extends TileEntity implements ITickable {
 		case 0:
 			this.energy = value;
 		}
+	}
+	
+	@Override
+	public SPacketUpdateTileEntity getUpdatePacket() {
+	    return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
+	}
+
+	@Override
+	public NBTTagCompound getUpdateTag() {
+	    return writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+	    readFromNBT(pkt.getNbtCompound());
 	}
 	
 	public boolean isUsableByPlayer(EntityPlayer player)
